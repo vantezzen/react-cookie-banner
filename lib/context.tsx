@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, use, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   CookieConsentEntries,
   CookieConsentState,
@@ -19,7 +19,7 @@ export const useCookieConsent = () => {
       "useCookieConsent must be used within a CookieConsentProvider"
     );
   }
-  return use(context);
+  return useContext(context);
 };
 
 export const CookieConsentProvider = ({

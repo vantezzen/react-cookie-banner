@@ -1,6 +1,6 @@
 {
   "name": "@vantezzen/react-cookie-banner",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "type": "module",
   "files": [
     "dist"
@@ -15,7 +15,7 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/lib/main.d.ts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/main.js"
     }
   },
