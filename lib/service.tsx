@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useEffect } from "react";
 import { useCookieConsent } from "./context";
 import { CookieCategory } from "./types";
 
@@ -22,12 +22,22 @@ export function CookieService({
   const { registerService, isServiceEnabled, isConsentModeActive } =
     useCookieConsent();
 
-  React.useEffect(() => {
+  useEffect(() => {
     registerService({ id, name, category });
   }, [id, name, category, registerService]);
 
-  const canUseConsentMode = consentMode && isConsentModeActive;
+  useEffect(() => {
+    if (consentMode && !isConsentModeActive) {
+      const consentModeWarnTimeout = setTimeout(() => {
+        console.warn(
+          `react-cookie-consent: You activated consent mode support for "${name}" but the consent mode integration wasn't found.\nMake sure to add the <ConsentMode /> component to your app, otherwise the service won't be loaded.`
+        );
+      }, 1000);
+      return () => clearTimeout(consentModeWarnTimeout);
+    }
+  }, [consentMode, isConsentModeActive]);
 
+  const canUseConsentMode = consentMode && isConsentModeActive;
   if (!canUseConsentMode && !isServiceEnabled({ id, name, category })) {
     return <>{fallback}</>;
   }

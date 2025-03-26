@@ -241,6 +241,54 @@ function MyComponent() {
 }
 ```
 
+### How do I manually open or close the cookie banner?
+
+You can use the `useCookieConsent` hook to open or close the cookie banner.
+
+```jsx
+import { useCookieConsent } from "@vantezzen/react-cookie-banner";
+
+function MyComponent() {
+  const { isOpen, setOpen } = useCookieConsent();
+
+  return (
+    <div>
+      <button onClick={() => setOpen(true)}>Open Cookie Banner</button>
+      <button onClick={() => setOpen(false)}>Close Cookie Banner</button>
+    </div>
+  );
+}
+```
+
+### How do I manually set the consent state?
+
+react-cookie-banner differentiates between category consents and service consents. You can set the consent state for a category or a specific service using the `useCookieConsent` hook.
+
+If no explicit consent is set for a service or it is set to `null`, the category consent is used.
+
+```jsx
+import { useCookieConsent } from "@vantezzen/react-cookie-banner";
+
+function MyComponent() {
+  const { setConsent, setServiceConsent } = useCookieConsent();
+
+  // Set the consent state across categories
+  setConsent({
+    analytics: true,
+    marketing: false,
+    other: false,
+  });
+
+  // Set the consent state for a specific service
+  setServiceConsent("google-analytics", true);
+
+  // Setting service consent to null will use the category consent
+  setServiceConsent("google-analytics", null); // => will use the "analytics" category consent
+
+  return <div>My Component</div>;
+}
+```
+
 ### How do I add services that do not need a component?
 
 You can simply add a `CookieService` component without any children.
@@ -401,6 +449,41 @@ Google Consent Mode is a feature of Google Analytics and Google Ads that allows 
 This is done by always loading the Google scripts and instead adding the consent status to the `window.dataLayer` object. Google Analytics and Google Ads will then only track the user if the consent status is set to `granted` and only send anonymized data if the consent status is not given yet.
 
 For Consent Mode to work, you will need to include the `<ConsentMode />` component once - this will sync the consent status with the dataLayer. On all services that support it, you can then add the `consentMode` props - this will then always load those scripts as soon as the consent mode is ready.
+
+### Why do I get "the consent mode integration wasn't found" in the console?
+
+If you have actived Consent Mode support on a service but didn't load the `<ConsentMode />` component, you will see this warning:
+
+> react-cookie-consent: You activated consent mode support for "Google Analytics" but the consent mode integration wasn't found.
+> Make sure to add the <ConsentMode /> component to your app, otherwise the service won't be loaded.
+
+To fix this issue, simply add the `<ConsentMode />` component to your app:
+
+```jsx
+import {
+  CookieConsentProvider,
+  ConsentMode,
+} from "@vantezzen/react-cookie-banner";
+
+function App() {
+  return (
+    <CookieConsentProvider>
+      <ConsentMode />
+      {/* Your app */}
+    </CookieConsentProvider>
+  );
+}
+```
+
+### How do I add a link to my privacy policy?
+
+You can add a link to your privacy policy by passing a `privacyPolicyUrl` prop to the `CookieBanner` component.
+
+```jsx
+import { CookieBanner } from "@vantezzen/react-cookie-banner";
+
+<CookieBanner privacyPolicyUrl="/privacy-policy" />;
+```
 
 ### How do I change the appearance of the cookie banner?
 
