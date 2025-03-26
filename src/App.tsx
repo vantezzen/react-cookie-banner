@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   CookieBanner,
   ConsentMode,
@@ -5,12 +6,14 @@ import {
   FloatingConsentInfo,
   CookieService,
 } from "../lib";
+import { TranslationLanguage } from "../lib/lang";
 
 function App() {
+  const [lang, setLang] = useState<TranslationLanguage | "auto">("auto");
   return (
     <>
       <CookieConsentProvider>
-        <CookieBanner />
+        <CookieBanner lang={lang} />
         <FloatingConsentInfo />
         <ConsentMode />
 
@@ -24,11 +27,12 @@ function App() {
         </CookieService>
 
         <CookieService
-          id="other-analytics"
+          id="adobe-analytics"
           category="analytics"
-          name="Somer Other Analytics"
+          name="Adobe Analytics"
+          fallback={<div>Adobe Analytics not loaded</div>}
         >
-          <div>Some other Analytics loaded</div>
+          <div>Adobe Analytics loaded</div>
         </CookieService>
 
         <CookieService
@@ -48,6 +52,22 @@ function App() {
         <CookieService id="intercom" category="other" name="Intercom">
           <div>Intercom loaded</div>
         </CookieService>
+
+        <select value={lang} onChange={(e) => setLang(e.target.value)}>
+          <option value="auto">Auto</option>
+          <option value="en">English</option>
+          <option value="de">German</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="it">Italian</option>
+          <option value="nl">Dutch</option>
+          <option value="pt">Portuguese</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="zh">Chinese</option>
+          <option value="ru">Russian</option>
+          <option value="ar">Arabic</option>
+        </select>
       </CookieConsentProvider>
     </>
   );

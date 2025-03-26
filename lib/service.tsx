@@ -10,12 +10,14 @@ export function CookieService({
   category,
   children,
   consentMode = false,
+  fallback = null,
 }: {
   id: string;
   name: string;
   category: CookieCategory;
   children?: React.ReactNode;
   consentMode?: boolean;
+  fallback?: React.ReactNode;
 }) {
   const { registerService, isServiceEnabled, isConsentModeActive } =
     useCookieConsent();
@@ -27,7 +29,7 @@ export function CookieService({
   const canUseConsentMode = consentMode && isConsentModeActive;
 
   if (!canUseConsentMode && !isServiceEnabled({ id, name, category })) {
-    return null;
+    return <>{fallback}</>;
   }
 
   return <>{children}</>;

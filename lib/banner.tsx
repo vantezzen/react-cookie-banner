@@ -4,12 +4,28 @@ import { useState, useEffect } from "react";
 import "./cookie-banner.css";
 import { CookieCategory, CookieConsentEntries } from "./types";
 import { useCookieConsent } from "./context";
+import {
+  CookieBannerTranslations,
+  defaultTranslations,
+  TranslationLanguage,
+} from "./lang";
 
 export function CookieBanner({
   privacyPolicyUrl = "/privacy",
+  lang = "auto",
 }: {
   privacyPolicyUrl?: string;
+  lang?: CookieBannerTranslations | TranslationLanguage | "auto";
 }) {
+  const browserLang = navigator.language.split("-")[0];
+  if (lang === "auto") {
+    lang = browserLang as TranslationLanguage;
+  }
+  const t =
+    typeof lang === "object"
+      ? lang
+      : defaultTranslations[lang] ?? defaultTranslations.en;
+
   const {
     isOpen,
     setOpen,
@@ -30,27 +46,27 @@ export function CookieBanner({
     {
       // @ts-expect-error - Not a real category but we want to display it
       id: "essential",
-      name: "Essential",
+      name: t.essential,
       required: true,
       enabled: true,
     },
     {
       id: "marketing",
-      name: "Marketing",
+      name: t.marketing,
       required: false,
       enabled: true,
       services: services.filter((service) => service.category === "marketing"),
     },
     {
       id: "analytics",
-      name: "Analytics",
+      name: t.analytics,
       required: false,
       enabled: true,
       services: services.filter((service) => service.category === "analytics"),
     },
     {
       id: "other",
-      name: "Other",
+      name: t.other,
       required: false,
       enabled: true,
       services: services.filter((service) => service.category === "other"),
@@ -74,7 +90,7 @@ export function CookieBanner({
       // Show the banner if consent hasn't been given yet
       setOpen(true);
     }
-  }, []);
+  }, [window.location.pathname, consent, privacyPolicyUrl, setOpen]);
 
   const saveConsent = () => {
     setOpen(false);
@@ -146,12 +162,8 @@ export function CookieBanner({
     <div className="cookie-banner-overlay">
       <div className="cookie-banner">
         <div className="cookie-banner-header">
-          <h2>Cookie Preferences</h2>
-          <p>
-            We use cookies to enhance your browsing experience, serve
-            personalized ads or content, and analyze our traffic. By clicking
-            "Accept All", you consent to our use of cookies.
-          </p>
+          <h2>{t.title}</h2>
+          <p>{t.description}</p>
         </div>
 
         <div className="cookie-categories">
@@ -176,7 +188,7 @@ export function CookieBanner({
                       </span>
                       {category.required && (
                         <span className="cookie-banner-required-badge">
-                          Required
+                          {t.required}
                         </span>
                       )}
                     </label>
@@ -225,26 +237,26 @@ export function CookieBanner({
 
         <div className="cookie-banner-privacy-policy">
           <p>
-            For more information about how we use cookies, please read our{" "}
-            <a href={privacyPolicyUrl}>Privacy Policy</a>.
+            {t.privacyPolicyInfo}{" "}
+            <a href={privacyPolicyUrl}>{t.privacyPolicy}</a>.
           </p>
         </div>
 
         <div className="cookie-banner-actions">
           {hasCustomSelection() ? (
             <button className="cookie-banner-save-button" onClick={saveConsent}>
-              Save Selection
+              {t.saveSelection}
             </button>
           ) : (
             <button
               className="cookie-banner-disable-button"
               onClick={disableAll}
             >
-              Disable All
+              {t.disableAll}
             </button>
           )}
           <button className="cookie-banner-accept-button" onClick={acceptAll}>
-            Accept All
+            {t.acceptAll}
           </button>
         </div>
       </div>

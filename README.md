@@ -4,14 +4,13 @@
 
 react-cookie-banner handles displaying your cookie banner, saving and managing user consent and loading of external scripts based on user consent for you.
 
-- **Simple to use**: Just wrap your app in the `CookieConsentProvider` and use the `CookieBanner` component to display the cookie banner
-- **Minimal config**: Services are automatically added to your cookie banner by wrapping them in the `CookieService` component
+- **Simple to use**: No large configuration needed, just wrap your external scripts in the `CookieService` component
 - **Support for all library loaders**: You can use other libraries like `@nextjs/third-parties` to load external scripts
-- **Handles loading of external scripts**: Only load external scripts if the user has given consent
+- **i18n support**: Build-in support for multiple languages, plus fully customizable texts if you need it
+- **Handles consent automatically**: All scripts wrapped in the `CookieService` component are only loaded if the user has given consent
 - **Customizable**: Customize the look and feel of the cookie banner to fit your website
 - **Google Consent Mode**: Automatically enable Google Consent Mode for Google Analytics and Ads
-- **Privacy Policy Link**: Add a link to your privacy policy to the cookie banner and hide the banner while the user reads the privacy policy
-- **Small**: Only 6.5kb gzipped
+- **Multi-tab support**: User consent is saved in local storage and synced between tabs automatically
 
 What does it look like?
 
@@ -94,13 +93,15 @@ Use the `CookieBanner` component to display the cookie banner.
 
 Optionally, you can pass a `privacyPolicyUrl` prop to add a link to your privacy policy to the cookie banner. If none is provided `/privacy` will be used.
 
+Additionally, you can set the `lang` prop to one of the supported languages (e.g. `de` for German) to change the language of the cookie banner or provide your own texts using the prop. If you do not supply a `lang` prop or explicitly set it to `"auto"`, the texts will be in the user's browser language or english as a fallback.
+
 ```jsx
 import { CookieBanner } from "@vantezzen/react-cookie-banner";
 
 function App() {
   return (
     <CookieConsentProvider>
-      <CookieBanner privacyPolicyUrl="/privacy-policy" />
+      <CookieBanner privacyPolicyUrl="/privacy-policy" lang="de" />
       {/* Your app */}
     </CookieConsentProvider>
   );
@@ -256,6 +257,143 @@ import { CookieService } from "@vantezzen/react-cookie-banner";
 
 You can then use `useCookieConsent` to check if the service is enabled and load the script manually.
 
+### How do I render a fallback if the user has not given consent?
+
+You can add a `fallback` prop to the `CookieService` component to render a component if the user has not given consent.
+
+```jsx
+import { CookieService } from "@vantezzen/react-cookie-banner";
+
+<CookieService
+  id="google-analytics"
+  category="analytics"
+  name="Google Analytics"
+  fallback={<div>Google Analytics is disabled</div>}
+>
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-123456789-1"
+  />
+</CookieService>;
+```
+
+### A service is not shown in the cookie banner, what do I do?
+
+To make sure a service is shown, follow these steps:
+
+1. Make sure the service is wrapped in a `CookieService` component
+
+```jsx
+import { CookieService } from "@vantezzen/react-cookie-banner";
+
+// Wrong
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=UA-123456789-1"
+/>
+
+// Right
+<CookieService
+  id="google-analytics"
+  category="analytics"
+  name="Google Analytics"
+>
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-123456789-1"
+  />
+</CookieService>
+```
+
+2. Make sure the `CookieService` component and the `CookieBanner` component are inside the `CookieConsentProvider`
+
+```jsx
+import {
+  CookieConsentProvider,
+  CookieBanner,
+  CookieService,
+} from "@vantezzen/react-cookie-banner";
+
+function App() {
+  return (
+    <CookieConsentProvider>
+      <CookieBanner privacyPolicyUrl="/privacy-policy" />
+      <CookieService
+        id="google-analytics"
+        category="analytics"
+        name="Google Analytics"
+      >
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=UA-123456789-1"
+        />
+      </CookieService>
+      {/* Your app */}
+    </CookieConsentProvider>
+  );
+}
+```
+
+3. Make sure the `CookieService` component is rendered when the `CookieBanner` component is rendered
+
+In order for the service to be discoverable, the `CookieService` component needs to be rendered when the `CookieBanner` component is rendered. If you are only loading the service later or only on specific pages, consider adding a blank `CookieService` component to the layout or a parent component that is always rendered:
+
+```jsx
+import { CookieService } from "@vantezzen/react-cookie-banner";
+
+// Embeds are only loaded on specific pages so we add a blank CookieService component to the layout
+<CookieService id="youtube" category="other" name="YouTube Embeds" />;
+```
+
+### How do I only load elements like YouTube Embeds if the user has given consent?
+
+Simply wrap the element in a `CookieService` component. You may want to add a fallback to show a message to the user that they need to give consent to load the element.
+
+```jsx
+import {
+  CookieService,
+  useCookieConsent,
+} from "@vantezzen/react-cookie-banner";
+
+function MyEmbed() {
+  const { setServiceConsent } = useCookieConsent();
+
+  return (
+    <CookieService
+      id="youtube"
+      category="other"
+      name="YouTube Embeds"
+      fallback={
+        <div style={{ padding: "16px", backgroundColor: "red" }}>
+          You need to give consent to load this video
+          <button onClick={() => setServiceConsent("youtube", true)}>
+            Give Consent
+          </button>
+        </div>
+      }
+    >
+      <iframe
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      ></iframe>
+    </CookieService>
+  );
+}
+```
+
+Please keep in mind that for services to appear in the cookie banner, they need to be rendered in the component tree when the `CookieBanner` component is rendered. If you are only loading the embed later or only on specific pages, consider adding a `CookieService` component to the layout or a parent component that is always rendered:
+
+```jsx
+import { CookieService } from "@vantezzen/react-cookie-banner";
+
+<CookieService id="youtube" category="other" name="YouTube Embeds" />;
+```
+
+You may add as many YouTube Embeds with the same ID as you want - they will all be loaded if the user gives consent.
+
 ### How does the Google Consent Mode work?
 
 Google Consent Mode is a feature of Google Analytics and Google Ads that allows you to enable Google Analytics and Google Ads without tracking the user until they have given consent.
@@ -267,6 +405,52 @@ For Consent Mode to work, you will need to include the `<ConsentMode />` compone
 ### How do I change the appearance of the cookie banner?
 
 The cookie banner ships with a default CSS file that you can override with your own styles. You can take a look at the default styles in the `src/lib/cookie-banner.css` file.
+
+### How do I change the texts of the cookie banner?
+
+You can change the texts of the cookie banner by passing a `lang` prop to the `CookieBanner` component. The following languages are supported:
+
+- `en` - English
+- `de` - German
+- `es` - Spanish
+- `fr` - French
+- `it` - Italian
+- `nl` - Dutch
+- `pt` - Portuguese
+- `ja` - Japanese
+- `ko` - Korean
+- `zh` - Chinese
+- `ru` - Russian
+- `ar` - Arabic
+
+Alternatively, you can pass a custom translation object to the `lang` prop to the `CookieBanner` component to customize the texts.
+
+```jsx
+import { CookieBanner } from "@vantezzen/react-cookie-banner";
+
+<CookieBanner
+  lang="ru"
+  // or
+  lang={{
+    title: "Cookie consent",
+    description:
+      'We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.',
+    required: "Required",
+
+    privacyPolicyInfo: "For more information, please visit our",
+    privacyPolicy: "Privacy Policy",
+
+    acceptAll: "Accept all",
+    saveSelection: "Save selection",
+    disableAll: "Disable all",
+
+    essential: "Essential",
+    marketing: "Marketing",
+    analytics: "Analytics",
+    other: "Other",
+  }}
+/>;
+```
 
 ## API
 
@@ -287,6 +471,7 @@ The cookie banner ships with a default CSS file that you can override with your 
   - `category`: "analytics" | "marketing" | "other"
   - `name`: string
   - `consentMode`: boolean = false
+  - `fallback`?: ReactNode - A component to render if the user has not given consent
 
 ### `useCookieConsent`
 
