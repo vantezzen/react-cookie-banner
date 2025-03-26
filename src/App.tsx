@@ -26,9 +26,27 @@ function App() {
         <CookieService
           id="other-analytics"
           category="analytics"
-          name="Other Analytics"
+          name="Somer Other Analytics"
         >
-          <div>Other Analytics loaded</div>
+          <div>Some other Analytics loaded</div>
+        </CookieService>
+
+        <CookieService
+          id="facebook-pixel"
+          category="marketing"
+          name="Facebook Pixel"
+        >
+          <div>Facebook Pixel loaded</div>
+        </CookieService>
+
+        <CookieService
+          id="youtube-embed"
+          category="other"
+          name="Youtube Embed"
+        />
+
+        <CookieService id="intercom" category="other" name="Intercom">
+          <div>Intercom loaded</div>
         </CookieService>
       </CookieConsentProvider>
     </>

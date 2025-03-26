@@ -14,7 +14,7 @@ export function CookieService({
   id: string;
   name: string;
   category: CookieCategory;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   consentMode?: boolean;
 }) {
   const { registerService, isServiceEnabled, isConsentModeActive } =
@@ -29,8 +29,6 @@ export function CookieService({
   if (!canUseConsentMode && !isServiceEnabled({ id, name, category })) {
     return null;
   }
-
-  // TODO: Implement consent mode
 
   return <>{children}</>;
 }
