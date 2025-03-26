@@ -156,7 +156,9 @@ export function CookieBanner({
 
         <div className="cookie-categories">
           {cookieCategories
-            .filter((category) => category.services?.length > 0)
+            .filter(
+              (category) => category.services?.length > 0 || category.required
+            )
             .map((category) => (
               <div key={category.id} className="cookie-category">
                 <div className="cookie-banner-category-header">
@@ -164,7 +166,7 @@ export function CookieBanner({
                     <label className="cookie-banner-checkbox-container">
                       <input
                         type="checkbox"
-                        checked={cookieCategoryConsents[category.id]}
+                        checked={cookieCategoryConsents[category.id] ?? true}
                         onChange={() => toggleCategory(category.id)}
                         disabled={category.required}
                       />
@@ -179,18 +181,20 @@ export function CookieBanner({
                       )}
                     </label>
                   </div>
-                  <button
-                    className="cookie-banner-expand-button"
-                    onClick={() => toggleCategoryExpansion(category.id)}
-                    aria-expanded={expandedCategories.includes(category.id)}
-                  >
-                    {expandedCategories.includes(category.id) ? "−" : "+"}
-                  </button>
+                  {category.services?.length > 0 && (
+                    <button
+                      className="cookie-banner-expand-button"
+                      onClick={() => toggleCategoryExpansion(category.id)}
+                      aria-expanded={expandedCategories.includes(category.id)}
+                    >
+                      {expandedCategories.includes(category.id) ? "−" : "+"}
+                    </button>
+                  )}
                 </div>
 
                 {expandedCategories.includes(category.id) && (
                   <div className="cookie-banner-category-services">
-                    {category.services.map((service) => (
+                    {category.services?.map((service) => (
                       <div
                         key={service.id}
                         className="cookie-banner-service-item"
