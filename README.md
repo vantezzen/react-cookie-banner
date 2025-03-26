@@ -15,7 +15,9 @@ react-cookie-banner handles displaying your cookie banner, saving and managing u
 
 What does it look like?
 
-Demo: <https://vantezzen.github.io/react-cookie-banner/>
+![Cookie Banner](https://raw.githubusercontent.com/vantezzen/react-cookie-banner/refs/heads/main/demo.png)
+
+Live Demo: <https://vantezzen.github.io/react-cookie-banner/>
 
 ```jsx
 import {
