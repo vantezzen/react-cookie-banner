@@ -32,7 +32,7 @@ function App() {
     // Wrap your app in the CookieConsentProvider to allow accessing the consent state anywhere
     <CookieConsentProvider>
       {/* Display the cookie banner */}
-      <CookieBanner privacyPolicyUrl="/privacy-policy" />
+      <CookieBanner />
 
       {/* Optionally you can show a floating consent info in the bottom right to allow
       changing consent later */}
@@ -93,7 +93,7 @@ Use the `CookieBanner` component to display the cookie banner.
 
 Optionally, you can pass a `privacyPolicyUrl` prop to add a link to your privacy policy to the cookie banner. If none is provided `/privacy` will be used.
 
-Additionally, you can set the `lang` prop to one of the supported languages (e.g. `de` for German) to change the language of the cookie banner or provide your own texts using the prop. If you do not supply a `lang` prop or explicitly set it to `"auto"`, the texts will be in the user's browser language or english as a fallback.
+Additionally, you can set the `lang` prop to one of the supported languages (e.g. `de` for German) to change the language of the cookie banner or provide your own texts using the prop. If you do not supply a `lang` prop, the texts will be in the user's browser language or english as a fallback.
 
 ```jsx
 import { CookieBanner } from "@vantezzen/react-cookie-banner";
@@ -101,7 +101,7 @@ import { CookieBanner } from "@vantezzen/react-cookie-banner";
 function App() {
   return (
     <CookieConsentProvider>
-      <CookieBanner privacyPolicyUrl="/privacy-policy" lang="de" />
+      <CookieBanner />
       {/* Your app */}
     </CookieConsentProvider>
   );
@@ -136,9 +136,11 @@ function App() {
 }
 ```
 
-### 4. Show a floating consent info (optional)
+### 4. Show a floating consent info or custom link (optional)
 
-Optionally, you can show a floating consent info in the bottom right to allow changing consent later.
+Sometimes, users may want to change their consent after they have given it.
+
+For this you can show a floating button. This will always be in the bottom right of the user's screen and allows them to open the cookie banner back up at any time.
 
 ```jsx
 import { FloatingConsentInfo } from "@vantezzen/react-cookie-banner";
@@ -150,6 +152,23 @@ function App() {
       <FloatingConsentInfo />
       {/* Your app */}
     </CookieConsentProvider>
+  );
+}
+```
+
+Alternatively, you may add a custom way to open the cookie banner back up - e.g. as a link in your footer.
+
+```jsx
+import { useCookieConsent } from "@vantezzen/react-cookie-banner";
+
+function MyFooter() {
+  const { setOpen } = useCookieConsent();
+
+  return (
+    <footer>
+      <button onClick={() => setOpen(true)}>Open Cookie Banner</button>
+      {/* Your other code */}
+    </footer>
   );
 }
 ```
@@ -200,6 +219,29 @@ import { CookieService } from "@vantezzen/react-cookie-banner";
     async
     src="https://www.googletagmanager.com/gtag/js?id=UA-123456789-1"
   />
+</CookieService>;
+```
+
+### What services are supported?
+
+You can add any service to the cookie banner by wrapping it in the `CookieService` component. This includes Google Analytics, Google Ads, Facebook Pixel, Hotjar, and many more.
+
+react-cookie-banner does not have built-in support for any specific service, but instead any React component you may use to load things can go inside the `CookieService` component.
+
+### How do I use `@next/third-parties` with react-cookie-banner?
+
+`@next/third-parties` is a library that allows you to load external scripts in Next.js. You can use it with react-cookie-banner by wrapping the `CookieService` component around the `ThirdParties` component.
+
+```jsx
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { CookieService } from "@vantezzen/react-cookie-banner";
+
+<CookieService
+  id="google-analytics"
+  category="analytics" // or "marketing" or "other"
+  name="Google Analytics"
+>
+  <GoogleAnalytics id="UA-123456789-1" />
 </CookieService>;
 ```
 

@@ -204,33 +204,38 @@ export function CookieBanner({
                   )}
                 </div>
 
-                {expandedCategories.includes(category.id) && (
-                  <div className="cookie-banner-category-services">
-                    {category.services?.map((service) => (
-                      <div
-                        key={service.id}
-                        className="cookie-banner-service-item"
-                      >
-                        <label className="cookie-banner-checkbox-container">
-                          <input
-                            type="checkbox"
-                            checked={
-                              customServiceConsents[service.id] ??
-                              serviceConsents[service.id] ??
-                              category.enabled
-                            }
-                            onChange={() => toggleService(service.id)}
-                            disabled={category.required}
-                          />
-                          <span className="cookie-banner-checkmark"></span>
-                          <span className="cookie-banner-service-name">
-                            {service.name}
-                          </span>
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div
+                  className={
+                    "cookie-banner-category-services" +
+                    (expandedCategories.includes(category.id)
+                      ? " cookie-banner-category-services-expanded"
+                      : "")
+                  }
+                >
+                  {category.services?.map((service) => (
+                    <div
+                      key={service.id}
+                      className="cookie-banner-service-item"
+                    >
+                      <label className="cookie-banner-checkbox-container">
+                        <input
+                          type="checkbox"
+                          checked={
+                            customServiceConsents[service.id] ??
+                            serviceConsents[service.id] ??
+                            category.enabled
+                          }
+                          onChange={() => toggleService(service.id)}
+                          disabled={category.required}
+                        />
+                        <span className="cookie-banner-checkmark cookie-banner-service-checkmark"></span>
+                        <span className="cookie-banner-service-name">
+                          {service.name}
+                        </span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
         </div>

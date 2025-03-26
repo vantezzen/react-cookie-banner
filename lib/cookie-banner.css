@@ -118,13 +118,22 @@
 }
 
 .cookie-banner-category-services {
-  padding: 0 12px 12px;
+  padding: 0 12px;
   background-color: #fff;
+
+  max-height: 0;
+  transition: all 0.15s;
+  overflow: hidden;
+}
+
+.cookie-banner-category-services.cookie-banner-category-services-expanded {
+  max-height: 100vh;
+  padding: 12px 12px;
   border-top: 1px solid #eaeaea;
 }
 
 .cookie-banner-service-item {
-  padding: 8px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -226,6 +235,12 @@
   border-radius: 4px;
 }
 
+.cookie-banner-service-checkmark {
+  height: 14px;
+  width: 14px;
+  margin: 0 2px;
+}
+
 .cookie-banner-checkbox-container:hover input ~ .cookie-banner-checkmark {
   border-color: #b3b3b3;
 }
@@ -255,6 +270,13 @@
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+.cookie-banner-checkbox-container .cookie-banner-service-checkmark:after {
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 7px;
 }
 
 .cookie-banner-checkbox-container input:disabled ~ .cookie-banner-checkmark {
