@@ -30,7 +30,7 @@ export function CookieService({
     if (consentMode && !isConsentModeActive) {
       const consentModeWarnTimeout = setTimeout(() => {
         console.warn(
-          `react-cookie-consent: You activated consent mode support for "${name}" but the consent mode integration wasn't found.\nMake sure to add the <ConsentMode /> component to your app, otherwise the service won't be loaded.`
+          `react-cookie-consent: You activated consent mode support for "${name}" but the consent mode integration wasn't found.\nMake sure to add the <ConsentMode /> component to your app, otherwise the service won't be loaded.\nFor more information, visit https://github.com/vantezzen/react-cookie-banner#why-do-i-get-the-consent-mode-integration-wasnt-found-in-the-console`
         );
       }, 1000);
       return () => clearTimeout(consentModeWarnTimeout);

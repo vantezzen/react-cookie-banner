@@ -53,7 +53,10 @@ function App() {
           <div>Intercom loaded</div>
         </CookieService>
 
-        <select value={lang} onChange={(e) => setLang(e.target.value)}>
+        <select
+          value={lang}
+          onChange={(e) => setLang(e.target.value as TranslationLanguage)}
+        >
           <option value="auto">Auto</option>
           <option value="en">English</option>
           <option value="de">German</option>
