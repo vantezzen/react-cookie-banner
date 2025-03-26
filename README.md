@@ -35,7 +35,7 @@ function App() {
       {/* Display the cookie banner */}
       <CookieBanner privacyPolicyUrl="/privacy-policy" />
 
-      {/* Optionally you can show a floating consent info in to bottom right to allow
+      {/* Optionally you can show a floating consent info in the bottom right to allow
       changing consent later */}
       <FloatingConsentInfo />
 
@@ -145,6 +145,7 @@ import { FloatingConsentInfo } from "@vantezzen/react-cookie-banner";
 function App() {
   return (
     <CookieConsentProvider>
+      {/* cookie banner, services etc. here */}
       <FloatingConsentInfo />
       {/* Your app */}
     </CookieConsentProvider>
@@ -203,7 +204,7 @@ import { CookieService } from "@vantezzen/react-cookie-banner";
 
 ### My service has multiple scripts, how do I add them all?
 
-You can simply add mutliple scripts or components to the `CookieService` component or use the same ID for multiple `CookieService` components.
+You can simply add multiple scripts or components to the `CookieService` component or use the same ID for multiple `CookieService` components.
 
 ```jsx
 import { CookieService } from "@vantezzen/react-cookie-banner";
@@ -260,6 +261,8 @@ You can then use `useCookieConsent` to check if the service is enabled and load 
 Google Consent Mode is a feature of Google Analytics and Google Ads that allows you to enable Google Analytics and Google Ads without tracking the user until they have given consent.
 
 This is done by always loading the Google scripts and instead adding the consent status to the `window.dataLayer` object. Google Analytics and Google Ads will then only track the user if the consent status is set to `granted` and only send anonymized data if the consent status is not given yet.
+
+For Consent Mode to work, you will need to include the `<ConsentMode />` component once - this will sync the consent status with the dataLayer. On all services that support it, you can then add the `consentMode` props - this will then always load those scripts as soon as the consent mode is ready.
 
 ### How do I change the appearance of the cookie banner?
 
